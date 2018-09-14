@@ -8,7 +8,7 @@ Set
 
 ## Requirements
 
-Must have an installation of
+Must have a properly setup ACE development environment.
 
 ## Known Issues
 

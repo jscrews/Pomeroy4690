@@ -1,7 +1,7 @@
 {
-  "name": "ouputtoinput",
-  "displayName": "OuputToInput",
-  "description": "Move file from output to input",
+  "name": "pomeroy4690",
+  "displayName": "Pomeroy 4690",
+  "description": "Helpful tools for use with 4690 development",
   "version": "0.0.1",
   "publisher": "jscrews",
   "engines": {
@@ -12,7 +12,8 @@
   ],
   "activationEvents": [
     "onCommand:4690.OutputToInput",
-    "onCommand:4690.setup"
+    "onCommand:4690.setup",
+    "onCommand:4690.addBuildTarget"
   ],
   "main": "./out/extension",
   "contributes": {
@@ -24,6 +25,10 @@
       {
         "command": "4690.setup",
         "title": "Setup 4690"
+      },
+      {
+        "command": "4690.addBuildTarget",
+        "title": "Add 4690 Build Target"
       }
     ]
   },
