@@ -1,29 +1,78 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+"use strict";
+import * as vscode from "vscode";
+import * as fs from "fs-extra";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  console.log('Congratulations, your extension "pomeroy4690" is now active!');
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "pomeroy4690" is now active!');
+  let outputToInput = vscode.commands.registerCommand(
+    "4690.OutputToInput",
+    async () => {
+      var currentlyOpenTabfilePath = "";
+      if (vscode.window.activeTextEditor) {
+        currentlyOpenTabfilePath =
+          vscode.window.activeTextEditor.document.fileName;
+      }
+      var inputPath = currentlyOpenTabfilePath.replace("output", "input");
+      try {
+        await fs.copy(currentlyOpenTabfilePath, inputPath);
+        vscode.workspace.openTextDocument(inputPath).then(doc => {
+          vscode.window.showTextDocument(doc);
+        });
+        vscode.window.showInformationMessage(
+          "Opened file you should be in input now"
+        );
+      } catch (err) {
+        vscode.window.showWarningMessage("Couldn't open file!");
+        return;
+      }
+    }
+  );
+  let setup4690 = vscode.commands.registerCommand("4690.setup", async () => {
+    var cwd = vscode.workspace.rootPath;
+    var setupString =
+      '{ \n  "configurations": [ \n    { \n      "name": "Win32", \n      "includePath": [ \n        "${workspaceFolder}/**", \n        "${workspaceFolder}/ace/rogue", \n        "C:/ibmcxxw/include", \n        "${workspaceFolder}/ace/include", \n        "${workspaceFolder}/ace/mgv/include", \n        "${workspaceFolder}/ace/mgv/commoncp", \n        "${workspaceFolder}/ace/trans", \n        "${workspaceFolder}/ace/bm", \n        "${workspaceFolder}/ace/ace", \n        "${workspaceFolder}/CUST/LVL/output/include/", \n        "${workspaceFolder}/CUST/LVL/output/include/nrsc", \n        "${workspaceFolder}/CUST/LVL/output/include/CUST", \n        "${workspaceFolder}/CUST/LVL/input/include/" \n      ], \n      "defines": ["_DEBUG", "UNICODE", "_UNICODE"], \n      "intelliSenseMode": "msvc-x64" \n    } \n  ], \n  "version": 4 \n} ';
+    let cust = "";
+    let lvl = "";
+    let os = "";
+    await vscode.window
+      .showInputBox({ prompt: "Enter the name of the customer folder" })
+      .then(value => {
+        if (value) {
+          cust = value;
+        }
+      });
+    await vscode.window
+      .showInputBox({ prompt: "Enter the name of the level folder" })
+      .then(value => {
+        if (value) {
+          lvl = value;
+        }
+      });
+    await vscode.window
+      .showInputBox({ prompt: "Enter the name of the flat os" })
+      .then(value => {
+        if (value) {
+          os = value;
+        }
+      });
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
+    if (cust === "" || lvl === "" || os === "") {
+      vscode.window.showErrorMessage(
+        "You must enter a customer, a level and a os"
+      );
+      return;
+    }
+    setupString = setupString.replace(/CUST/g, cust);
+    setupString = setupString.replace(/LVL/g, lvl);
+    fs.ensureDirSync(cwd + "\\.vscode");
+    fs.writeFile(cwd + "\\.vscode\\c_cpp_properties.json", setupString, err => {
+      if (err) {
+        vscode.window.showErrorMessage("Something went wrong: " + err.message);
+      }
     });
-
-    context.subscriptions.push(disposable);
+  });
+  context.subscriptions.push(outputToInput);
+  context.subscriptions.push(setup4690);
 }
-
-// this method is called when your extension is deactivated
-export function deactivate() {
-}
+export function deactivate() {}
