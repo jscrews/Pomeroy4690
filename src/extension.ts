@@ -124,6 +124,21 @@ export function activate(context: vscode.ExtensionContext) {
         taskString +
         '    {\n      "label": "make ' +
         buildTargets[i] +
+        ' nt",\n      "type": "shell",\n      "command": "cd ' +
+        cust +
+        "\\\\" +
+        lvl +
+        " && acent " +
+        bldLvl +
+        " " +
+        version +
+        " && start " +
+        buildTargets[i] +
+        '"\n    },\n';
+      taskString =
+        taskString +
+        '    {\n      "label": "make ' +
+        buildTargets[i] +
         ' flat",\n      "type": "shell",\n      "command": "cd ' +
         cust +
         "\\\\" +
